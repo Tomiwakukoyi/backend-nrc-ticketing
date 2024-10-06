@@ -2,6 +2,19 @@ import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { IsEmail, IsString, MinLength } from 'class-validator';
+
+class RegisterDto {
+  @IsString()
+  name: string;
+
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @MinLength(6)
+  password: string;
+}
 
 @ApiTags('auth')
 @Controller('auth')
@@ -11,10 +24,12 @@ export class AuthController {
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
   @ApiResponse({ status: 201, description: 'User successfully registered' })
-  async register(
-    @Body() body: { email: string; password: string; name: string },
-  ) {
-    return this.authService.register(body.email, body.password, body.name);
+  async register(@Body() registerDto: RegisterDto) {
+    return this.authService.register(
+      registerDto.email,
+      registerDto.password,
+      registerDto.name,
+    );
   }
 
   @UseGuards(LocalAuthGuard)
