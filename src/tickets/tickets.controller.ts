@@ -1,19 +1,4 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Body,
-  UseGuards,
-  Request,
-} from '@nestjs/common';
-import { TicketsService } from './tickets.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
+import { CreateTicketDto } from './dto/create-ticket.dto';
 
 @ApiTags('tickets')
 @ApiBearerAuth()
@@ -25,12 +10,8 @@ export class TicketsController {
   @Post()
   @ApiOperation({ summary: 'Create a new ticket' })
   @ApiResponse({ status: 201, description: 'Ticket successfully created' })
-  async createTicket(
-    @Request() req,
-    @Body()
-    body: { from: string; to: string; departureTime: Date; price: number },
-  ) {
-    return this.ticketsService.createTicket(req.user.userId, body);
+  async createTicket(@Request() req, @Body() createTicketDto: CreateTicketDto) {
+    return this.ticketsService.createTicket(req.user.userId, createTicketDto);
   }
 
   @UseGuards(JwtAuthGuard)
